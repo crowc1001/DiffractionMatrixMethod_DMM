@@ -1,4 +1,4 @@
-function [K_TEh, K_TMh, F_out, theta_deg_air, eta_out, eta_wg_sub, eta_sp, eta_abs, eta_emitter_eff, eta_out_h, eta_wg_sub_h, eta_sp_h, eta_abs_h, eta_emitter_eff_h, eta_out_TMv, eta_wg_sub_TMv, eta_sp_TMv, eta_abs_TMv, eta_emitter_eff_TMv, u_crit, K_h, uK_h, K_h_prime, uK_h_prime, K_TMv, uK_TMv, K_TMv_prime, uK_TMv_prime, K, uK, K_prime, uK_prime, Purcell_h, Purcell_TMv, Purcell] = Func_CPS_clean(thickness_upper, thickness_below, z_plus, z_minus, n, lambda0, eta_emitter, du, u_upper)
+function [F_out, theta_deg_air, eta_out, eta_wg_sub, eta_sp, eta_abs, eta_emitter_eff, eta_out_h, eta_wg_sub_h, eta_sp_h, eta_abs_h, eta_emitter_eff_h, eta_out_TMv, eta_wg_sub_TMv, eta_sp_TMv, eta_abs_TMv, eta_emitter_eff_TMv, u_crit, K_h, uK_h, K_h_prime, uK_h_prime, K_TMv, uK_TMv, K_TMv_prime, uK_TMv_prime, K, uK, K_prime, uK_prime, Purcell_h, Purcell_TMv, Purcell, K_TEh] = Func_CPS_clean(thickness_upper, thickness_below, z_plus, z_minus, n, lambda0, eta_emitter, du, u_upper)
 k0 = 2*pi/lambda0;
 k(1,:) = k0*n(1,:);
 
@@ -10,7 +10,7 @@ thickness = [thickness_upper thickness_EML thickness_below];
 n_upper = n(1:length(thickness_upper));
 n_below = n(length(thickness_upper)+2:length(thickness));
 n_upper_prime = n(1:(length(thickness_upper)+1)); %n_init = n_init
-n_below_prime = n((length(thickness_upper)+1):length(thickness)); % Func_TMM : ÎÇòÍ∞ÄÎäî Îß§ÏßàÏù¥ 1Ïù¥ ÏïÑÎãêÎïåÎèÑ ÎêòÎäîÍ∞Ä ÌôïÏù∏
+n_below_prime = n((length(thickness_upper)+1):length(thickness)); % Func_TMM : ≥™∞°¥¬ ∏≈¡˙¿Ã 1¿Ã æ∆¥“∂ßµµ µ«¥¬∞° »Æ¿Œ
 
 floor_EML = length(thickness_upper)+1;
 
@@ -97,19 +97,19 @@ uK_prime = u.*K_prime;
 uK_h_prime = u.*K_h_prime;
 
 %% Value of Integration
-F_TEh_out = 2*sum((uK_TEh(1:floor(u_crit*1/du)))*du,'omitnan');
-F_TMh_out = 2*sum((uK_TMh(1:floor(u_crit*1/du)))*du,'omitnan');
-F_TMv_out = 2*sum((uK_TMv(1:floor(u_crit*1/du)))*du,'omitnan');
+F_TEh_out = 2*nansum((uK_TEh(1:floor(u_crit*1/du)))*du);
+F_TMh_out = 2*nansum((uK_TMh(1:floor(u_crit*1/du)))*du);
+F_TMv_out = 2*nansum((uK_TMv(1:floor(u_crit*1/du)))*du);
 
-F_TEh_prime_out = 2*sum((uK_TEh_prime(1:floor(u_crit*1/du)))*du,'omitnan');
-F_TMh_prime_out = 2*sum((uK_TMh_prime(1:floor(u_crit*1/du)))*du,'omitnan');
-F_TMv_prime_out = 2*sum((uK_TMv_prime(1:floor(u_crit*1/du)))*du,'omitnan');
+F_TEh_prime_out = 2*nansum((uK_TEh_prime(1:floor(u_crit*1/du)))*du);
+F_TMh_prime_out = 2*nansum((uK_TMh_prime(1:floor(u_crit*1/du)))*du);
+F_TMv_prime_out = 2*nansum((uK_TMv_prime(1:floor(u_crit*1/du)))*du);
 
 %% Total(vertical+horizontal)
-F_out_direction = 2*sum((uK(1:floor(u_crit*1/du)))*du,'omitnan');%
-F_wg_sub = 2*sum((uK(floor(u_crit*1/du):1/du))*du,'omitnan');
-F_sp = 2*sum((uK(1/du + 1:u_upper*1/du))*du,'omitnan');
-F_out = 2*sum(uK_prime(1:floor(u_crit*1/du))*du,'omitnan');%
+F_out_direction = 2*nansum((uK(1:floor(u_crit*1/du)))*du);%
+F_wg_sub = 2*nansum((uK(floor(u_crit*1/du):1/du))*du);
+F_sp = 2*nansum((uK(1/du + 1:u_upper*1/du))*du);
+F_out = 2*nansum(uK_prime(1:floor(u_crit*1/du))*du);%
 F_abs = F_out_direction - F_out;
 
 eta_out = F_out / (F_out+F_wg_sub+F_sp+F_abs);
@@ -117,14 +117,14 @@ eta_wg_sub = F_wg_sub / (F_out+F_wg_sub+F_sp+F_abs);
 eta_sp = F_sp / (F_out+F_wg_sub+F_sp+F_abs);
 eta_abs = F_abs / (F_out+F_wg_sub+F_sp+F_abs);
 
-Purcell = 2*sum(uK*du,'omitnan');
+Purcell = 2*nansum(uK*du);
 eta_emitter_eff = eta_emitter*Purcell / (eta_emitter*Purcell + (1-eta_emitter));
 
 %% Horizontal
-F_out_direction_TEh = 2*sum((uK_TEh(1:floor(u_crit*1/du)))*du,'omitnan');
-F_wg_sub_TEh = 2*sum((uK_TEh(floor(u_crit*1/du):1/du))*du,'omitnan');
-F_sp_TEh = 2*sum((uK_TEh(1/du + 1:u_upper*1/du))*du,'omitnan');
-F_out_TEh = 2*sum(uK_TEh_prime(1:floor(u_crit*1/du))*du,'omitnan');
+F_out_direction_TEh = 2*nansum((uK_TEh(1:floor(u_crit*1/du)))*du);
+F_wg_sub_TEh = 2*nansum((uK_TEh(floor(u_crit*1/du):1/du))*du);
+F_sp_TEh = 2*nansum((uK_TEh(1/du + 1:u_upper*1/du))*du);
+F_out_TEh = 2*nansum(uK_TEh_prime(1:floor(u_crit*1/du))*du);
 F_abs_TEh = F_out_direction_TEh - F_out_TEh;
 
 eta_out_TEh = F_out_TEh / (F_out_TEh+F_wg_sub_TEh+F_sp_TEh);
@@ -132,14 +132,14 @@ eta_wg_sub_TEh = F_wg_sub_TEh / (F_out_TEh+F_wg_sub_TEh+F_sp_TEh);
 eta_sp_TEh = F_sp_TEh / (F_out_TEh+F_wg_sub_TEh+F_sp_TEh);
 eta_abs_TEh = F_abs_TEh / (F_out_TEh+F_wg_sub_TEh+F_sp_TEh);
 
-Purcell_TEh = 2*sum(uK_TEh*du,'omitnan');
+Purcell_TEh = 2*nansum(uK_TEh*du);
 eta_emitter_eff_TEh = eta_emitter*Purcell_TEh / (eta_emitter*Purcell_TEh + (1-eta_emitter));
 
 %%
-F_out_direction_TMh = 2*sum((uK_TMh(1:floor(u_crit*1/du)))*du,'omitnan');
-F_wg_sub_TMh = 2*sum((uK_TMh(floor(u_crit*1/du):1/du))*du,'omitnan');
-F_sp_TMh = 2*sum((uK_TMh(1/du + 1:u_upper*1/du))*du,'omitnan');
-F_out_TMh = 2*sum(uK_TMh_prime(1:floor(u_crit*1/du))*du,'omitnan');
+F_out_direction_TMh = 2*nansum((uK_TMh(1:floor(u_crit*1/du)))*du);
+F_wg_sub_TMh = 2*nansum((uK_TMh(floor(u_crit*1/du):1/du))*du);
+F_sp_TMh = 2*nansum((uK_TMh(1/du + 1:u_upper*1/du))*du);
+F_out_TMh = 2*nansum(uK_TMh_prime(1:floor(u_crit*1/du))*du);
 F_abs_TMh = F_out_direction_TMh - F_out_TMh;
 
 eta_out_TMh = F_out_TMh / (F_out_TMh+F_wg_sub_TMh+F_sp_TMh);
@@ -147,7 +147,7 @@ eta_wg_sub_TMh = F_wg_sub_TMh / (F_out_TMh+F_wg_sub_TMh+F_sp_TMh);
 eta_sp_TMh = F_sp_TMh / (F_out_TMh+F_wg_sub_TMh+F_sp_TMh);
 eta_abs_TMh = F_abs_TMh / (F_out_TMh+F_wg_sub_TMh+F_sp_TMh);
 
-Purcell_TMh = 2*sum(uK_TMh*du,'omitnan');
+Purcell_TMh = 2*nansum(uK_TMh*du);
 eta_emitter_eff_TMh = eta_emitter*Purcell_TMh / (eta_emitter*Purcell_TMh + (1-eta_emitter));
 
 %%
@@ -162,14 +162,14 @@ eta_wg_sub_h = F_wg_sub_h / (F_out_h+F_wg_sub_h+F_sp_h+F_abs_h);
 eta_sp_h = F_sp_h / (F_out_h+F_wg_sub_h+F_sp_h+F_abs_h);
 eta_abs_h = F_abs_h / (F_out_h+F_wg_sub_h+F_sp_h+F_abs_h);
 
-Purcell_h = 2*sum(uK_h*du,'omitnan');
+Purcell_h = 2*nansum(uK_h*du);
 eta_emitter_eff_h = eta_emitter*Purcell_h / (eta_emitter*Purcell_h + (1-eta_emitter));
 
 %% Vertical
-F_out_direction_TMv = (1/3)*2*sum((uK_TMv(1:floor(u_crit*1/du)))*du,'omitnan');
-F_wg_sub_TMv = (1/3)*2*sum((uK_TMv(floor(u_crit*1/du):1/du))*du,'omitnan');
-F_sp_TMv = (1/3)*2*sum((uK_TMv(1/du + 1:u_upper*1/du))*du,'omitnan');
-F_out_TMv = (1/3)*2*sum(uK_TMv_prime(1:floor(u_crit*1/du))*du,'omitnan');
+F_out_direction_TMv = (1/3)*2*nansum((uK_TMv(1:floor(u_crit*1/du)))*du);
+F_wg_sub_TMv = (1/3)*2*nansum((uK_TMv(floor(u_crit*1/du):1/du))*du);
+F_sp_TMv = (1/3)*2*nansum((uK_TMv(1/du + 1:u_upper*1/du))*du);
+F_out_TMv = (1/3)*2*nansum(uK_TMv_prime(1:floor(u_crit*1/du))*du);
 F_abs_TMv = F_out_direction_TMv - F_out_TMv;
 
 eta_out_TMv = F_out_TMv / (F_out_TMv+F_wg_sub_TMv+F_sp_TMv+F_abs_TMv);
@@ -177,10 +177,10 @@ eta_wg_sub_TMv = F_wg_sub_TMv / (F_out_TMv+F_wg_sub_TMv+F_sp_TMv+F_abs_TMv);
 eta_sp_TMv = F_sp_TMv / (F_out_TMv+F_wg_sub_TMv+F_sp_TMv+F_abs_TMv);
 eta_abs_TMv = F_abs_TMv / (F_out_TMv+F_wg_sub_TMv+F_sp_TMv+F_abs_TMv);
 
-Purcell_TMv = 2*sum(uK_TMv*du,'omitnan');
+Purcell_TMv = 2*nansum(uK_TMv*du);
 eta_emitter_eff_TMv = eta_emitter*Purcell_TMv / (eta_emitter*Purcell_TMv + (1-eta_emitter));
 
 theta_rad_air = asin(n(floor_EML)/n(1)*u);
 theta_deg_air = theta_rad_air*180/pi;
-
+save('Temp.mat')
 end
