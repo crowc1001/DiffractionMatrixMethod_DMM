@@ -2,9 +2,6 @@ clear
 close all
 fix(clock)
 tic
-% need RETICOLO RCWA by Jean-Paul Hugonin & Philippe Lalanne
-% Hugonin, Jean Paul, and Philippe Lalanne. "Reticolo software for grating analysis." 
-% arXiv preprint arXiv:2101.00901 (2021).
 addpath('reticolo_allege');
 %% Parameter Define
 % All variables are in SI unit (m)
@@ -45,9 +42,6 @@ down.dutyy = [0,0.5,0];
 
 up.n = [n_org,n_Ag,n_top];
 up.thickness = [0,Ag_thickness,0];
-up.grating = [0,0,0];
-up.dutyx = [0,0,0];
-up.dutyy = [0,0,0];
 
 filename = ['RCWA\Org2D_nn' num2str(param.nns) '_res' num2str(param.resolution) '_period_' num2str(param.period*1e9) '_G',num2str(Grating_thickness*10^9), 'nm.mat'];
 
@@ -59,7 +53,7 @@ timeLoad = toc
 else
 
 [rd,td,sd] = RCWA_DMM2D(param,down);
-[ru,tu,su] = RCWA_DMM2D(param,up);
+[ru,tu,su] = TMM_DMM2D(param,up);
 
 
 timeRCWA = toc
@@ -70,8 +64,7 @@ end
 %% AFTER PROCESSING PARAMETERS
 
 param.x_dipole = 1/2*param.periodx; % x-position of dipole
-param.y_dipole = 0*param.periody;   % y-position of dipole
-                                    % origin : center of slab
+param.y_dipole = 0*param.periody; % x-position of dipole
 
 param.Org_thickness = 215*1e-9;
 param.Dipole_pos = 55*1e-9;

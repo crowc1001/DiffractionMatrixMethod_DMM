@@ -98,7 +98,7 @@ ylim([10^-4 10^2])
 
 hold on
 plot(u,(2*uK),'Linewidth',2)
-lgd = legend('20nm','0nm');
+lgd = legend('Corr','Planar');
 xlim([0 2])
 hold off
 
@@ -112,7 +112,7 @@ hold on
 polarplot(real(asin(n_org*u)),real(K_prime),'Linewidth',2,'Color','r')
 polarplot(-real(asin(n_org*uK_u)),real(max(uK_K_prime',1e-14)),'LineWidth',2,'Color','b')
 polarplot(-real(asin(n_org*u)),real(K_prime),'Linewidth',2,'Color','r')
-lgd = legend('20nm','0nm');
+lgd = legend('Corr','Planar');
 
 set(gca,'ThetaZeroLocation','top')
 thetalim([-90 90])

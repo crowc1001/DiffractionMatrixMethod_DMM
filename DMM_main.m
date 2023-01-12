@@ -1,12 +1,15 @@
 %% Introduction
+% Require Statistics & Machine Learning Toolbox
+% Require RETICOLO RCWA by Jean-Paul Hugonin & Philippe Lalanne
+% Hugonin, Jean Paul, and Philippe Lalanne. "Reticolo software for grating analysis." 
+% arXiv preprint arXiv:2101.00901 (2021).
+addpath('reticolo_allege');
+
 clear
 close all
 fix(clock)
 tic
-% need RETICOLO RCWA by Jean-Paul Hugonin & Philippe Lalanne
-% Hugonin, Jean Paul, and Philippe Lalanne. "Reticolo software for grating analysis." 
-% arXiv preprint arXiv:2101.00901 (2021).
-addpath('reticolo_allege');
+
 %% Parameter Define
 % All variables are in SI unit (m)
 
@@ -23,7 +26,7 @@ Grating_thickness = 20*1e-9;      % Thickness of grating
 Ag_thickness = 15*1e-9;           % Thickness of top Ag layer
 
 param.nns = 20;                   % Fourier orders kept in RCWA (-nns:nns)
-param.resolution = 40;            % # of points between 0th and 1st order in k-space
+param.resolution = 70;            % # of points between 0th and 1st order in k-space
 
 
 
@@ -42,7 +45,7 @@ param.uysize = param.uxsize;
 
 % starts from organic layer -> set down.n(1) to be n_org
 % set thickness of 1st and last layer to be 0
-% Recommended : set grating to bottom layer
+
 down.grating = [0,1,0];
 down.duty = [0,0.5,0];
 down.n = [n_org,[n_org,n_al],n_al];
@@ -64,11 +67,11 @@ if isfile(filename)
 
 else
 
-    % RCWA process
+    % RCWA/TMM process
     [rd,td,sd] = RCWA_DMM(param,down);
-    [ru,tu,su] = RCWA_DMM(param,up);
+    [ru,tu,su] = TMM_DMM(param,up);
 
-    % Record RCWA time
+    % Record RCWA/TMM time
     timeRCWA = toc
     save(filename)
 
@@ -86,9 +89,8 @@ param.sweep = 0;                            % 1: perform sweep
 param.sweeprange.Org = [200:10:300]*1e-9;   % if sweep == 1, replace Org_thickness, give sweep range of thickness of org layer
 param.sweeprange.Dip = [50:10:150]*1e-9;    % if sweep == 1, replace Dipole_pos, give sweep range of height of dipole
 
+param.x_dipole = 3/4*param.period;      % If singledip == 1, determine the position of dipole (from left side of slab)
 param.singledip = 1;                    % 0: incoherent planar emission, 1: single dipolar emission
-param.x_dipole = 0*param.period;        % If singledip == 1, determine the position of dipole (from left side of slab)
-                                        % 0 to 1 period
 
 param.uk = 1;                           % 1: Analyze power dissipation by its wavevectors
 param.showstructure = 1;                % 1: show structure of corrugated OLED
@@ -100,7 +102,7 @@ else
     result = DMM_sweep(param,up,rd,ru,tu);
 end
 % Record calculation time
-timeDMM = toc
+time = toc
 
 %% Utility
 % show structure real refractive index image
@@ -127,5 +129,3 @@ if param.Dox*param.Doy*param.Doz == 1
     end
 
 end
-
-timeFin = toc

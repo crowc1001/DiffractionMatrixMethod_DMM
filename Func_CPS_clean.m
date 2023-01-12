@@ -1,4 +1,4 @@
-function [F_out, theta_deg_air, eta_out, eta_wg_sub, eta_sp, eta_abs, eta_emitter_eff, eta_out_h, eta_wg_sub_h, eta_sp_h, eta_abs_h, eta_emitter_eff_h, eta_out_TMv, eta_wg_sub_TMv, eta_sp_TMv, eta_abs_TMv, eta_emitter_eff_TMv, u_crit, K_h, uK_h, K_h_prime, uK_h_prime, K_TMv, uK_TMv, K_TMv_prime, uK_TMv_prime, K, uK, K_prime, uK_prime, Purcell_h, Purcell_TMv, Purcell, K_TEh] = Func_CPS_clean(thickness_upper, thickness_below, z_plus, z_minus, n, lambda0, eta_emitter, du, u_upper)
+function [K_TEh, K_TMh, F_out, theta_deg_air, eta_out, eta_wg_sub, eta_sp, eta_abs, eta_emitter_eff, eta_out_h, eta_wg_sub_h, eta_sp_h, eta_abs_h, eta_emitter_eff_h, eta_out_TMv, eta_wg_sub_TMv, eta_sp_TMv, eta_abs_TMv, eta_emitter_eff_TMv, u_crit, K_h, uK_h, K_h_prime, uK_h_prime, K_TMv, uK_TMv, K_TMv_prime, uK_TMv_prime, K, uK, K_prime, uK_prime, Purcell_h, Purcell_TMv, Purcell] = Func_CPS_clean(thickness_upper, thickness_below, z_plus, z_minus, n, lambda0, eta_emitter, du, u_upper)
 k0 = 2*pi/lambda0;
 k(1,:) = k0*n(1,:);
 
@@ -10,7 +10,7 @@ thickness = [thickness_upper thickness_EML thickness_below];
 n_upper = n(1:length(thickness_upper));
 n_below = n(length(thickness_upper)+2:length(thickness));
 n_upper_prime = n(1:(length(thickness_upper)+1)); %n_init = n_init
-n_below_prime = n((length(thickness_upper)+1):length(thickness)); % Func_TMM : ³ª°¡´Â ¸ÅÁúÀÌ 1ÀÌ ¾Æ´Ò¶§µµ µÇ´Â°¡ È®ÀÎ
+n_below_prime = n((length(thickness_upper)+1):length(thickness)); % Func_TMM : ë‚˜ê°€ëŠ” ë§¤ì§ˆì´ 1ì´ ì•„ë‹ë•Œë„ ë˜ëŠ”ê°€ í™•ì¸
 
 floor_EML = length(thickness_upper)+1;
 
@@ -182,5 +182,5 @@ eta_emitter_eff_TMv = eta_emitter*Purcell_TMv / (eta_emitter*Purcell_TMv + (1-et
 
 theta_rad_air = asin(n(floor_EML)/n(1)*u);
 theta_deg_air = theta_rad_air*180/pi;
-save('Temp.mat')
+% save('sample_uK.mat')
 end

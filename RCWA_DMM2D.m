@@ -1,7 +1,5 @@
 function [rd,td,struc] = RCWA_DMM2D(param,down)
 
-% RCWA_DOWN PARAMETERS
-
 uxsize = param.uxsize;
 uysize = param.uysize;
 nns = param.nns;
@@ -12,13 +10,10 @@ wavelengths = param.wavelengths;
 
 n_org = down.n(1);
 
+rd = struct;
+td = struct;
 struc = zeros(round(sum(down.thickness*1e9)),100,100);
 numlayer = length(down.grating);
-
-
-
-
-if sum(down.grating) ~= 0
 
 % RCWA_DOWN PARAMETERS
 
@@ -27,10 +22,10 @@ R_amp_TETE = zeros(length(uxsize), length(uysize),13,13);
 R_amp_TMTE = zeros(length(uxsize), length(uysize),13,13);
 R_amp_TETM = zeros(length(uxsize), length(uysize),13,13);
 
-T_amp_TMTM = zeros(length(uxsize), length(uysize),13,13);
-T_amp_TETE = zeros(length(uxsize), length(uysize),13,13);
-T_amp_TMTE = zeros(length(uxsize), length(uysize),13,13);
-T_amp_TETM = zeros(length(uxsize), length(uysize),13,13);
+% T_amp_TMTM = zeros(length(uxsize), length(uysize),13,13);
+% T_amp_TETE = zeros(length(uxsize), length(uysize),13,13);
+% T_amp_TMTE = zeros(length(uxsize), length(uysize),13,13);
+% T_amp_TETM = zeros(length(uxsize), length(uysize),13,13);
 
 E_I_TEu = zeros(length(uxsize), length(uysize));
 E_I_TMu = zeros(length(uxsize), length(uysize));
@@ -40,10 +35,10 @@ E_R_TETEu = zeros(length(uxsize), length(uysize),13,13);
 E_R_TMTEu = zeros(length(uxsize), length(uysize),13,13);
 E_R_TETMu = zeros(length(uxsize), length(uysize),13,13);
 
-E_T_TMTMu = zeros(length(uxsize), length(uysize),13,13);
-E_T_TETEu = zeros(length(uxsize), length(uysize),13,13);
-E_T_TMTEu = zeros(length(uxsize), length(uysize),13,13);
-E_T_TETMu = zeros(length(uxsize), length(uysize),13,13);
+% E_T_TMTMu = zeros(length(uxsize), length(uysize),13,13);
+% E_T_TETEu = zeros(length(uxsize), length(uysize),13,13);
+% E_T_TMTEu = zeros(length(uxsize), length(uysize),13,13);
+% E_T_TETMu = zeros(length(uxsize), length(uysize),13,13);
 %% textures
 
 textures = cell(1, numlayer);
@@ -113,15 +108,15 @@ for i=1:13
         E_R_TMTEu(uxindex,uyindex,i,j) = sum(sum(result.TMinc_top_reflected.PlaneWave_TE_Eu{i-7,j-7}));
         E_R_TMTMu(uxindex,uyindex,i,j) = sum(sum(result.TMinc_top_reflected.PlaneWave_TM_Eu{i-7,j-7}));
 
-        T_amp_TMTM(uxindex,uyindex,i,j) = sum(result.TMinc_top_transmitted.amplitude_TM{i-7,j-7});
-        T_amp_TETE(uxindex,uyindex,i,j) = sum(result.TEinc_top_transmitted.amplitude_TE{i-7,j-7});
-        T_amp_TMTE(uxindex,uyindex,i,j) = sum(result.TMinc_top_transmitted.amplitude_TE{i-7,j-7});
-        T_amp_TETM(uxindex,uyindex,i,j) = sum(result.TEinc_top_transmitted.amplitude_TM{i-7,j-7});
-        
-        E_T_TETEu(uxindex,uyindex,i,j) = sum(sum(result.TEinc_top_transmitted.PlaneWave_TE_Eu{i-7,j-7}));
-        E_T_TETMu(uxindex,uyindex,i,j) = sum(sum(result.TEinc_top_transmitted.PlaneWave_TM_Eu{i-7,j-7}));
-        E_T_TMTEu(uxindex,uyindex,i,j) = sum(sum(result.TMinc_top_transmitted.PlaneWave_TE_Eu{i-7,j-7}));
-        E_T_TMTMu(uxindex,uyindex,i,j) = sum(sum(result.TMinc_top_transmitted.PlaneWave_TM_Eu{i-7,j-7}));
+%         T_amp_TMTM(uxindex,uyindex,i,j) = sum(result.TMinc_top_transmitted.amplitude_TM{i-7,j-7});
+%         T_amp_TETE(uxindex,uyindex,i,j) = sum(result.TEinc_top_transmitted.amplitude_TE{i-7,j-7});
+%         T_amp_TMTE(uxindex,uyindex,i,j) = sum(result.TMinc_top_transmitted.amplitude_TE{i-7,j-7});
+%         T_amp_TETM(uxindex,uyindex,i,j) = sum(result.TEinc_top_transmitted.amplitude_TM{i-7,j-7});
+%         
+%         E_T_TETEu(uxindex,uyindex,i,j) = sum(sum(result.TEinc_top_transmitted.PlaneWave_TE_Eu{i-7,j-7}));
+%         E_T_TETMu(uxindex,uyindex,i,j) = sum(sum(result.TEinc_top_transmitted.PlaneWave_TM_Eu{i-7,j-7}));
+%         E_T_TMTEu(uxindex,uyindex,i,j) = sum(sum(result.TMinc_top_transmitted.PlaneWave_TE_Eu{i-7,j-7}));
+%         E_T_TMTMu(uxindex,uyindex,i,j) = sum(sum(result.TMinc_top_transmitted.PlaneWave_TM_Eu{i-7,j-7}));
     end
 end
 E_I_TEu(uxindex,uyindex) = result.TEinc_top.PlaneWave_TE_Eu(2);
@@ -141,70 +136,9 @@ rd.TMTM = R_amp_TMTM .* E_R_TMTMu ./ E_I_TMu;
 rd.TETM = R_amp_TETM .* E_R_TETMu ./ E_I_TEu;
 rd.TMTE = R_amp_TMTE .* E_R_TMTEu ./ E_I_TMu;
 
-td.TETE = T_amp_TETE .* E_T_TETEu ./ E_I_TEu;
-td.TMTM = T_amp_TMTM .* E_T_TMTMu ./ E_I_TMu;
-td.TETM = T_amp_TETM .* E_T_TETMu ./ E_I_TEu;
-td.TMTE = T_amp_TMTE .* E_T_TMTEu ./ E_I_TMu;
-
-else
-
-rd.TETE = zeros(length(uxsize), length(uysize),13,13);
-rd.TETM = zeros(length(uxsize), length(uysize),13,13);
-rd.TMTE = zeros(length(uxsize), length(uysize),13,13);
-rd.TMTM = zeros(length(uxsize), length(uysize),13,13);
-
-rTETE = zeros(length(uxsize), length(uysize));
-rTMTM = zeros(length(uxsize), length(uysize));
-
-td.TETE = zeros(length(uxsize), length(uysize),13,13);
-td.TETM = zeros(length(uxsize), length(uysize),13,13);
-td.TMTE = zeros(length(uxsize), length(uysize),13,13);
-td.TMTM = zeros(length(uxsize), length(uysize),13,13);
-
-tTETE = zeros(length(uxsize), length(uysize));
-tTMTM = zeros(length(uxsize), length(uysize));
-
-thickness_prime = down.thickness;
-n_prime = down.n;
-
-k = 0; 
-for i = 1:numlayer
-    struc(k+1:round(k+down.thickness(i)*1e9),:,:) = down.n(i);
-    k = k+round(down.thickness(i)*1e9);
-end
-
-
-for uxindex = 1:length(uxsize)
-parfor uyindex = 1:length(uysize)
-     
-ux = uxsize(uxindex);
-uy = uysize(uyindex);
-
-u_temp = sqrt(ux^2 + uy^2);
-
-[r_TE_temp,R_TE_temp,t_TE_temp,T_TE_temp,r_TM_temp,R_TM_temp,t_TM_temp,T_TM_temp] = Func_TMM(thickness_prime, n_prime, wavelengths, u_temp);
-    
-rTETE(uxindex,uyindex) = r_TE_temp;
-rTMTM(uxindex,uyindex) = r_TM_temp;
-
-tTETE(uxindex,uyindex) = t_TE_temp;
-tTMTM(uxindex,uyindex) = t_TM_temp;
-
-% Tup_amp_TETE0(uxindex,uyindex) = t_TE_temp;
-% Tup_amp_TMTM0(uxindex,uyindex) = t_TM_temp;
-
-
-retio;
-end
-end
-
-rd.TETE(:,:,7,7) = rTETE;
-rd.TMTM(:,:,7,7) = rTMTM;
-
-td.TETE(:,:,7,7) = tTETE;
-td.TMTM(:,:,7,7) = tTMTM;
-
-end
-
+% td.TETE = T_amp_TETE .* E_T_TETEu ./ E_I_TEu;
+% td.TMTM = T_amp_TMTM .* E_T_TMTMu ./ E_I_TMu;
+% td.TETM = T_amp_TETM .* E_T_TETMu ./ E_I_TEu;
+% td.TMTE = T_amp_TMTE .* E_T_TMTEu ./ E_I_TMu;
 
 end
